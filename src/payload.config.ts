@@ -1,16 +1,18 @@
+import path from 'path'
+import sharp from 'sharp'
+import { fileURLToPath } from 'url'
+import { v2 as cloudinary } from 'cloudinary'
+import { buildConfig, FileData } from 'payload'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { buildConfig, FileData } from 'payload'
-import { fileURLToPath } from 'url'
-import sharp from 'sharp'
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
-import { v2 as cloudinary } from 'cloudinary'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Products } from './collections/Products'
 import { Category } from './collections/Category'
+import { Banners } from './collections/Banner'
+import { Orders } from './collections/Orders'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,7 +35,6 @@ const cloudinaryAdapter = () => ({
     data: Record<string, unknown>
   }) {
     const filenameWithoutExt = file.filename.replace(/\.[^/.]+$/, '')
-    // Specify the folder path in Cloudinary
     const folderPath = 'flower_shop'
 
     const uploadResult = await new Promise<any>((resolve, reject) => {
@@ -68,7 +69,6 @@ const cloudinaryAdapter = () => ({
 
   async handleDelete({ filename }: { filename: string }) {
     const filenameWithoutExt = filename.replace(/\.[^/.]+$/, '')
-    // Include the folder path when deleting
     await cloudinary.uploader.destroy(`flower_shop/${filenameWithoutExt}`)
   },
 })
@@ -80,7 +80,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Products, Category],
+  collections: [Users, Media, Products, Category, Banners, Orders],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -100,7 +100,6 @@ export default buildConfig({
           generateFileURL: ({ filename }: { filename: string | number }) => {
             const name = filename.toString()
             const filenameWithoutExt = name.replace(/\.[^/.]+$/, '')
-            // Include the folder path in the URL generation
             return cloudinary.url(`flower_shop/${filenameWithoutExt}`, {
               secure: true,
               resource_type: 'image',
