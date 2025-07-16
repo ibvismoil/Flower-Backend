@@ -8,14 +8,6 @@ export const Orders: CollectionConfig = {
       name: 'user',
       type: 'relationship',
       relationTo: 'users',
-      required: true,
-      defaultValue: ({ user }) => user?.id,
-      access: {
-        create: () => true,
-        read: ({ req }) => ({ user: { equals: req.user.id } }),
-        update: ({ req }) => ({ user: { equals: req.user.id } }),
-        delete: ({ req }) => ({ user: { equals: req.user.id } }),
-      },
     },
     {
       name: 'products',
@@ -36,10 +28,20 @@ export const Orders: CollectionConfig = {
       required: true,
     },
   ],
+  hooks: {
+    beforeChange: [
+      ({ req, data, operation }) => {
+        if (operation === 'create' && req.user) {
+          data.user = req.user.id;
+        }
+        return data;
+      },
+    ],
+  },
   access: {
-    read: ({ req }) => ({ user: { equals: req.user.id } }),
-    update: ({ req }) => ({ user: { equals: req.user.id } }),
-    delete: ({ req }) => ({ user: { equals: req.user.id } }),
-    create: () => true,
+    read: ({ req }) => req.user.role === 'admin' ? true : { user: { equals: req.user.id } },
+    update: ({ req }) => req.user.role === 'admin' ? true : { user: { equals: req.user.id } },
+    delete: ({ req }) => req.user.role === 'admin' ? true : { user: { equals: req.user.id } },
+    create: ({ req }) => !!req.user,
   },
 }

@@ -9,13 +9,7 @@ export const Favorites: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       required: true,
-      defaultValue: ({ user }) => user?.id, // автоматически связывает с текущим пользователем
-      access: {
-        create: () => true,
-        read: ({ req }) => ({ user: { equals: req.user.id } }),
-        update: ({ req }) => ({ user: { equals: req.user.id } }),
-        delete: ({ req }) => ({ user: { equals: req.user.id } }),
-      },
+      defaultValue: ({ user }) => user?.id,
     },
     {
       name: 'product',
@@ -25,9 +19,9 @@ export const Favorites: CollectionConfig = {
     },
   ],
   access: {
-    read: ({ req }) => ({ user: { equals: req.user.id } }),
-    update: ({ req }) => ({ user: { equals: req.user.id } }),
-    delete: ({ req }) => ({ user: { equals: req.user.id } }),
-    create: () => true,
+    read: ({ req }) => req.user.role === 'admin' ? true : { user: { equals: req.user.id } },
+    update: ({ req }) => req.user.role === 'admin' ? true : { user: { equals: req.user.id } },
+    delete: ({ req }) => req.user.role === 'admin' ? true : { user: { equals: req.user.id } },
+    create: ({ req }) => !!req.user,
   },
 }
