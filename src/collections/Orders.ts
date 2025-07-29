@@ -6,9 +6,9 @@ export const Orders: CollectionConfig = {
     useAsTitle: 'id',
   },
   access: {
-    create: ({ req }) => !!req.user, // Только авторизованные могут создавать
-    read: ({ req }) => !!req.user,   // Только свои заказы
-    update: ({ req }) => !!req.user, // Только отменять свои
+    create: ({ req }) => !!req.user,
+    read: ({ req }) => !!req.user,   
+    update: ({ req }) => !!req.user, 
     delete: ({ req }) => req.user?.role === 'admin',
   },
   fields: [

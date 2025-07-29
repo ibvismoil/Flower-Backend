@@ -20,9 +20,9 @@ export const Favorites: CollectionConfig = {
     },
   ],
   access: {
-    read: ({ req }) => !!req.user, // Только авторизованные пользователи могут читать
-    create: ({ req }) => !!req.user, // Только авторизованные могут добавлять
-    delete: ({ req }) => !!req.user, // Только авторизованные могут удалять
-    update: () => false, // Обновлять не нужно
+    read: ({ req }) => !!req.user, 
+    create: ({ req }) => !!req.user, 
+    delete: ({ req }) => !!req.user, 
+    update: () => false,
   },
 }
