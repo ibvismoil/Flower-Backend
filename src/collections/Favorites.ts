@@ -2,14 +2,15 @@ import { CollectionConfig } from 'payload'
 
 export const Favorites: CollectionConfig = {
   slug: 'favorites',
-  auth: true,
+  admin: {
+    useAsTitle: 'id',
+  },
   fields: [
     {
       name: 'user',
       type: 'relationship',
       relationTo: 'users',
       required: true,
-      defaultValue: ({ user }) => user?.id,
     },
     {
       name: 'product',
@@ -19,22 +20,9 @@ export const Favorites: CollectionConfig = {
     },
   ],
   access: {
-  read: ({ req }) =>
-    req.user?.role === 'admin'
-      ? true
-      : { user: { equals: req.user?.id } },
-
-  update: ({ req }) =>
-    req.user?.role === 'admin'
-      ? true
-      : { user: { equals: req.user?.id } },
-
-  delete: ({ req }) =>
-    req.user?.role === 'admin'
-      ? true
-      : { user: { equals: req.user?.id } },
-
-  create: ({ req }) => !!req.user,
-},
-
+    read: ({ req }) => !!req.user, // Только авторизованные пользователи могут читать
+    create: ({ req }) => !!req.user, // Только авторизованные могут добавлять
+    delete: ({ req }) => !!req.user, // Только авторизованные могут удалять
+    update: () => false, // Обновлять не нужно
+  },
 }

@@ -2,65 +2,58 @@ import { CollectionConfig } from 'payload'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
-  auth: true,
+  admin: {
+    useAsTitle: 'id',
+  },
+  access: {
+    create: ({ req }) => !!req.user, // Только авторизованные могут создавать
+    read: ({ req }) => !!req.user,   // Только свои заказы
+    update: ({ req }) => !!req.user, // Только отменять свои
+    delete: ({ req }) => req.user?.role === 'admin',
+  },
   fields: [
     {
       name: 'user',
       type: 'relationship',
       relationTo: 'users',
+      required: true,
     },
     {
       name: 'products',
-      type: 'relationship',
-      relationTo: 'products',
-      hasMany: true,
+      type: 'array',
       required: true,
+      fields: [
+        {
+          name: 'product',
+          type: 'relationship',
+          relationTo: 'products',
+          required: true,
+        },
+        {
+          name: 'quantity',
+          type: 'number',
+          required: true,
+          min: 1,
+          defaultValue: 1,
+        },
+      ],
     },
     {
       name: 'status',
       type: 'select',
-      options: ['pending', 'completed', 'cancelled'],
+      options: [
+        { label: 'В обработке', value: 'pending' },
+        { label: 'Отменён', value: 'cancelled' },
+        { label: 'Завершён', value: 'completed' },
+      ],
       defaultValue: 'pending',
-    },
-    {
-      name: 'totalPrice',
-      type: 'number',
       required: true,
     },
+    {
+      name: 'createdAt',
+      type: 'date',
+      admin: { readOnly: true },
+      defaultValue: () => new Date(),
+    },
   ],
-  hooks: {
-    beforeChange: [
-      ({ req, data, operation }) => {
-        if (operation === 'create' && req.user) {
-          data.user = req.user.id;
-        }
-        return data;
-      },
-    ],
-  },
-  access: {
-  read: ({ req }) => {
-    if (!req.user) return false;
-    return req.user.role === 'admin'
-      ? true
-      : { user: { equals: req.user.id } };
-  },
-
-  update: ({ req }) => {
-    if (!req.user) return false;
-    return req.user.role === 'admin'
-      ? true
-      : { user: { equals: req.user.id } };
-  },
-
-  delete: ({ req }) => {
-    if (!req.user) return false;
-    return req.user.role === 'admin'
-      ? true
-      : { user: { equals: req.user.id } };
-  },
-
-  create: ({ req }) => !!req.user,
-}
-
 }
