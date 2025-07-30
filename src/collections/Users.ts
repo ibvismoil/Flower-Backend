@@ -38,12 +38,14 @@ export const Users: CollectionConfig = {
         update: ({ req }) => req.user?.role === 'admin',
       },
     },
+    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'surename', label: 'SureName', type: 'text', required: true },
     { name: 'phoneNumber', label: 'Phone Number', type: 'text', required: true },
     { name: 'country', label: 'Country', type: 'text', required: true },
     { name: 'city', label: 'City', type: 'text', required: true },
     { name: 'street', label: 'Улица / Район', type: 'text', required: true },
-    { name: 'houseOrApartment', label: 'Дом или квартира', type: 'text', required: true },
-    { name: 'apartmentOrHouseNumber', label: 'Квартира или номер дома', type: 'text', required: true },
+    { name: 'house', label: 'Участок или квартира', type: 'text', required: true },
+    { name: 'housenumber', label: 'Номер учатска или квартиры', type: 'text', required: true },
   ],
   hooks: {
     beforeChange: [

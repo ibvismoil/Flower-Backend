@@ -130,12 +130,14 @@ export interface UserAuthOperations {
 export interface User {
   id: string;
   role: 'user' | 'admin';
+  name: string;
+  surename: string;
   phoneNumber: string;
   country: string;
   city: string;
   street: string;
-  houseOrApartment: string;
-  apartmentOrHouseNumber: string;
+  house: string;
+  housenumber: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -328,12 +330,14 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  name?: T;
+  surename?: T;
   phoneNumber?: T;
   country?: T;
   city?: T;
   street?: T;
-  houseOrApartment?: T;
-  apartmentOrHouseNumber?: T;
+  house?: T;
+  housenumber?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
